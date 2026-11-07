@@ -1,0 +1,101 @@
+EPISODE NUMBER: Episode 3
+EPISODE LOGLINE: Elena opens her father's safe and finds proof that upends everything — just as Desmond's men arrive at the gates.
+CONTINUITY NOTES: Synthetic demo screenplay (fictional show "Inherit the Night"). Written for this submission's public demo — NOT Kuku content.
+
+--- SCRIPT START ---
+
+SCENE 1
+Scene Heading: INT. MARROW HILL HOUSE - CELLAR - NIGHT
+Scene Start: (00:00.00)
+Scene End: (00:58.00)
+
+**CAMERA:**
+Start: (00:00.00) | End: (00:04.00)
+A single bulb swings over Elena as she turns the brass key. The old safe groans open. Inside: a slim folder and a photograph.
+
+**ELENA (reading, voice breaking):**
+Start: (00:04.00) | End: (00:09.00)
+"'In the event of my death, the truth is owed to Adrian Kade first, and to my daughter second.'"
+
+**CAMERA:**
+Start: (00:09.00) | End: (00:12.50)
+She lifts the photograph: her father and a young Adrian, laughing, arms around each other's shoulders. On the back, three words.
+
+**ELENA (whisper):**
+Start: (00:12.50) | End: (00:15.50)
+"'My only brother.'"
+
+**SOUND FX:**
+Start: (00:15.50) | End: (00:17.80)
+A sharp intake of breath echoes off the stone walls.
+
+**ELENA (reeling):**
+Start: (00:17.80) | End: (00:22.00)
+"Adrian isn't a stranger. He's blood. Desmond isn't my uncle at all —"
+
+**ADRIAN (from the stairs):**
+Start: (00:22.00) | End: (00:26.50)
+"Desmond married into this family. I was born into it, then erased from it. Your father and I were brothers."
+
+**ELENA (rounding on him):**
+Start: (00:26.50) | End: (00:30.00)
+"Then why let me believe you came to take everything?"
+
+**ADRIAN:**
+Start: (00:30.00) | End: (00:35.50)
+"Because if Desmond thought I wanted the money, he'd never guess I came back for you. You were the one thing he could still use against me."
+
+**SOUND FX:**
+Start: (00:35.50) | End: (00:39.00)
+Outside, tyres scream on gravel; headlights flood the cellar window.
+
+**CAMERA:**
+Start: (00:39.00) | End: (00:43.00)
+Adrian's head snaps toward the light. His calm is gone.
+
+**ADRIAN (urgent):**
+Start: (00:43.00) | End: (00:47.50)
+"He came early. Elena — whatever you hear up there, do not open that door."
+
+SCENE 2
+Scene Heading: INT. MARROW HILL HOUSE - ENTRANCE HALL - CONTINUOUS
+Scene Start: (00:58.00)
+Scene End: (01:40.00)
+
+**CAMERA:**
+Start: (00:58.00) | End: (01:02.50)
+Elena climbs the cellar stairs against Adrian's warning. Through the frosted glass of the front door, three dark silhouettes stand waiting.
+
+**DESMOND (through the door, muffled):**
+Start: (01:02.50) | End: (01:07.00)
+"Open up, Elena. Hand me the folder and your inheritance stays yours. I only want him."
+
+**ELENA (hand on the latch):**
+Start: (01:07.00) | End: (01:10.50)
+"And if I don't?"
+
+**DESMOND:**
+Start: (01:10.50) | End: (01:14.50)
+"Then I burn Marrow Hill to the ground with both of you inside it."
+
+**CAMERA:**
+Start: (01:14.50) | End: (01:18.50)
+Close on Elena's trembling fingers tightening around the brass latch. Behind her, Adrian reaches the top of the stairs.
+
+**ADRIAN (sharp):**
+Start: (01:18.50) | End: (01:20.50)
+"Elena, step back —"
+
+**CAMERA:**
+Start: (01:20.50) | End: (01:24.50)
+She turns the latch. The door swings inward. The silhouettes raise their hands into the light.
+
+**ELENA (gasping):**
+Start: (01:24.50) | End: (01:27.00)
+"You? It was you the whole time?"
+
+**SOUND FX:**
+Start: (01:27.00) | End: (01:29.50)
+A gunshot cracks. Smash to black.
+
+--- SCRIPT END ---

@@ -1,0 +1,4 @@
+# Core
+anthropic>=0.40
+google-genai>=0.3
+streamlit>=1.40

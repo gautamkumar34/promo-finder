@@ -1,0 +1,21 @@
+# secrets
+.env
+# Kuku content — never publish (confidentiality)
+raw_outputs/
+parsed/
+*.json
+!package.json
+# synthetic demo (safe to publish — not Kuku content)
+!sample_screenplay/demo_bundle.json
+# internal / not for the public repo
+# VIDEO_SCRIPT.md contains a verbatim Kuku line — keep private
+VIDEO_SCRIPT.md
+# PLAN.md internal build plan; LINKS.txt internal scratch
+PLAN.md
+LINKS.txt
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/

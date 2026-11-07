@@ -1,0 +1,89 @@
+EPISODE NUMBER: Episode 1
+EPISODE LOGLINE: At her father's will reading, Elena learns the entire estate has been left to a stranger — who walks in and gives her until midnight to leave.
+CONTINUITY NOTES: Synthetic demo screenplay (fictional show "Inherit the Night"). Written for this submission's public demo — NOT Kuku content.
+
+--- SCRIPT START ---
+
+SCENE 1
+Scene Heading: INT. HARLOW & GREY LAW OFFICE - DAY
+Scene Start: (00:00.00)
+Scene End: (01:04.00)
+
+**CAMERA:**
+Start: (00:00.00) | End: (00:03.20)
+Slow push-in on Elena's face as she sits rigid at the head of a long mahogany table, black veil pushed back, eyes raw from crying.
+
+**LAWYER:**
+Start: (00:03.20) | End: (00:08.40)
+"The entire estate — every share, every account, the house on Marrow Hill — passes in full to a single beneficiary."
+
+**ELENA (bewildered):**
+Start: (00:08.40) | End: (00:11.00)
+"That's — my father left everything to me, surely."
+
+**LAWYER:**
+Start: (00:11.00) | End: (00:15.50)
+"No, Miss Voss. To a man none of you in this room have ever met."
+
+**CAMERA:**
+Start: (00:15.50) | End: (00:19.00)
+Sharp cut to the aunts gasping; Uncle Desmond's wine glass freezes halfway to his lips.
+
+**UNCLE DESMOND (furious):**
+Start: (00:19.00) | End: (00:23.20)
+"That is absurd. My brother would never hand the Voss name to an outsider."
+
+**ELENA (quiet, shaking):**
+Start: (00:23.20) | End: (00:27.00)
+"Who is he? What is his name?"
+
+**LAWYER:**
+Start: (00:27.00) | End: (00:31.50)
+"He asked to deliver that answer himself. He is already here."
+
+**SOUND FX:**
+Start: (00:31.50) | End: (00:34.00)
+The heavy oak door unlatches with a deep, echoing clunk.
+
+SCENE 2
+Scene Heading: INT. HARLOW & GREY LAW OFFICE - CONTINUOUS
+Scene Start: (01:04.00)
+Scene End: (02:02.00)
+
+**CAMERA:**
+Start: (01:04.00) | End: (01:08.50)
+Low angle on polished black shoes crossing the threshold; the room turns as one. A tall man in a charcoal coat steps into the light.
+
+**ADRIAN (calm):**
+Start: (01:08.50) | End: (01:12.80)
+"You must be Elena. You have your father's eyes."
+
+**ELENA (rising):**
+Start: (01:12.80) | End: (01:16.00)
+"I don't know you. Why would he give you my whole life?"
+
+**ADRIAN:**
+Start: (01:16.00) | End: (01:21.40)
+"Because thirty years ago your father made a promise. And tonight I have come to collect it."
+
+**UNCLE DESMOND:**
+Start: (01:21.40) | End: (01:24.50)
+"Get out before I call security, you fraud."
+
+**ADRIAN (not turning):**
+Start: (01:24.50) | End: (01:29.00)
+"Security works for me now, Desmond. As of this morning, so do you."
+
+**CAMERA:**
+Start: (01:29.00) | End: (01:33.50)
+Push in on Elena, breath held, as Adrian finally meets her gaze.
+
+**ADRIAN (softly, to Elena):**
+Start: (01:33.50) | End: (01:39.00)
+"The house is mine. Everything is mine. You have until midnight to decide whether you walk out that door — or stay and learn why."
+
+**SOUND FX:**
+Start: (01:39.00) | End: (01:42.00)
+A single low cello note swells and cuts abruptly to black.
+
+--- SCRIPT END ---
