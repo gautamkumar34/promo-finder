@@ -94,6 +94,11 @@ with st.sidebar.expander("⚙️ Run live — upload & swap the model"):
                              help="For an OpenAI-compatible / self-hosted endpoint. "
                                   "Leave blank for Anthropic or Google.")
     run = st.button("Find promos")
+    if st.session_state.get("live_data"):
+        if st.button("↩︎ Back to pre-computed results"):
+            st.session_state.pop("live_data", None)
+            st.session_state.pop("live_model", None)
+            st.rerun()
 
 data = None
 if run:
@@ -144,6 +149,9 @@ if run:
                                     f"{int(p['end_sec']//60)}:{p['end_sec']%60:05.2f}"
                     p["script_span"] = render_span(ep, p["start_sec"], p["end_sec"])
                 data = promos
+                # persist so filters/dropdowns don't wipe the live run on the next rerun
+                st.session_state["live_data"] = promos
+                st.session_state["live_model"] = model
                 st.sidebar.success(f"Scored {len(files)} episode(s) with {model} "
                                    "(live = scoring + ranking only; stitch & self-audit "
                                    "are in the full offline run).")
@@ -154,7 +162,14 @@ if run:
 
 # ---- main ----------------------------------------------------------------
 is_demo = False
-if data is None:
+if data is not None:
+    # a live run just completed this cycle
+    source_note = f"live run · {model}"
+elif st.session_state.get("live_data"):
+    # a live run from an earlier interaction — keep showing it through filter clicks
+    data = st.session_state["live_data"]
+    source_note = f"live run · {st.session_state.get('live_model', '')}"
+else:
     data = load_bundle(BUNDLE)
     if data:
         source_note = "pre-computed run · Kuku input pack"
@@ -162,8 +177,6 @@ if data is None:
         data = load_bundle(DEMO_BUNDLE)
         is_demo = True
         source_note = "synthetic demo show · \"Inherit the Night\""
-else:
-    source_note = f"live run · {model}"
 
 st.title("Ranked Promos")
 if is_demo:
