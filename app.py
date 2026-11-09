@@ -48,7 +48,11 @@ def promo_card(p):
             if p.get("segments") and len(p["segments"]) > 1:
                 st.caption(f"↔ cross-episode promo · {len(p['segments'])} segments")
             if p.get("flags"):
-                st.warning("Self-audit: " + ", ".join(p["flags"]))
+                st.warning("Self-audit (Opus critic): " + ", ".join(p["flags"]))
+            if p.get("hook_in_span") is False:
+                st.warning("🔎 Hook grounding (code check): the quoted hook line isn't "
+                           "inside this window — the in-point starts just after it. "
+                           "Fix: snap the start back to include the hook beat.")
             if p.get("script_span"):
                 with st.expander("📜 Script span (the clip)"):
                     st.code(p["script_span"], language=None)
@@ -72,6 +76,9 @@ st.sidebar.divider()
 wave_f = st.sidebar.radio("Posting wave", ["All", "Wave 1 only", "Wave 2 only"])
 min_comp = st.sidebar.slider("Min composite score", 0.0, 10.0, 0.0, 0.5)
 hide_ctx = st.sidebar.checkbox("Hide 'needs context' promos", value=False)
+only_hook_flag = st.sidebar.checkbox("🔎 Hook-grounding flags only", value=False,
+                                     help="Show only clips where the quoted hook line "
+                                          "falls outside the window (code check).")
 
 # ---- live run — swap the model ------------------------------------------
 with st.sidebar.expander("⚙️ Run live — upload & swap the model"):
@@ -119,42 +126,28 @@ if run:
         st.sidebar.warning("Upload a .txt screenplay, or give a local folder path.")
 
     if src_dir:
-        from src.parse import parse_file
-        from src.candidates import generate_candidates
-        from src.score import score_episode
-        from src.rank import rank
-        from src.bundle import render_span
-        from src.adapter import ModelAdapter
+        from src.run import run as run_pipeline
         files = sorted(glob.glob(os.path.join(src_dir, "*.txt")))
         if not files:
             st.sidebar.error("No .txt screenplays found.")
         else:
             try:
-                adapter = ModelAdapter(provider=provider, model=model,
-                                       api_key=api_key or None, base_url=base_url or None)
-                scored = []
-                prog = st.sidebar.progress(0.0, text="Scoring…")
-                for i, f in enumerate(files, 1):
-                    ep = parse_file(f)
-                    scored.extend(score_episode(adapter, ep, generate_candidates(ep, 12)))
-                    prog.progress(i / len(files), text=f"Scoring {i}/{len(files)}")
-                promos = rank(scored, 2)
-                cache = {}
-                for p in promos:
-                    if p["source_file"] not in cache:
-                        cache[p["source_file"]] = parse_file(
-                            os.path.join(src_dir, p["source_file"]))
-                    ep = cache[p["source_file"]]
-                    p["timecode"] = f"{int(p['start_sec']//60)}:{p['start_sec']%60:05.2f}-" \
-                                    f"{int(p['end_sec']//60)}:{p['end_sec']%60:05.2f}"
-                    p["script_span"] = render_span(ep, p["start_sec"], p["end_sec"])
+                with st.spinner(f"Running the pipeline with {model} — "
+                                "score, cross-episode stitch, rank, hook check…"):
+                    promos = run_pipeline(
+                        src_dir, provider=provider, model=model,
+                        api_key=api_key or None, base_url=base_url or None,
+                        do_audit=False)  # Opus self-audit stays in the offline pass
                 data = promos
                 # persist so filters/dropdowns don't wipe the live run on the next rerun
                 st.session_state["live_data"] = promos
                 st.session_state["live_model"] = model
-                st.sidebar.success(f"Scored {len(files)} episode(s) with {model} "
-                                   "(live = scoring + ranking only; stitch & self-audit "
-                                   "are in the full offline run).")
+                nce = sum(1 for p in promos
+                          if p.get("segments") and len(p["segments"]) > 1)
+                st.sidebar.success(
+                    f"Ran {len(files)} episode(s) with {model}: {len(promos)} promos, "
+                    f"{nce} cross-episode. Live run does score + stitch + rank + the "
+                    "hook check; the Opus self-audit is the offline pass.")
             except Exception as e:
                 st.sidebar.error(f"Live run failed: {type(e).__name__}: {e}\n\n"
                                  "Check the provider/model and that a valid API key is set "
@@ -193,6 +186,7 @@ if not data:
 view = [p for p in data
         if p["composite"] >= min_comp
         and not (hide_ctx and p.get("needs_context"))
+        and (not only_hook_flag or p.get("hook_in_span") is False)
         and (wave_f == "All"
              or (wave_f == "Wave 1 only" and p["wave"] == 1)
              or (wave_f == "Wave 2 only" and p["wave"] == 2))]

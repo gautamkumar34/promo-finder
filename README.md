@@ -36,7 +36,7 @@ The app opens on a **pre-computed ranked list** (no API key needed). To run the 
 - **Upload** one or more screenplay `.txt` files (same format as `sample_screenplay/`), or give a **local folder path**.
 - Pick a **provider/model** at the top, optionally paste an **API key** (held in memory only — never stored), and hit **Find promos**.
 
-> Live mode runs **scoring + ranking** only (fast). Cross-episode stitch and self-audit are in the full offline run (see the solution doc).
+> Live mode runs the full pipeline — **score, cross-episode stitch, rank, and the deterministic hook-grounding check** (`src/run.py`). Only the **Opus self-audit** stays in the offline pass, to keep live runs fast and off a pricier model. The pre-computed bundles (real and demo) include all stages. Run the whole thing yourself with `python -m src.run <folder>`.
 
 ## Swapping the model / provider
 

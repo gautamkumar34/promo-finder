@@ -1,60 +1,57 @@
-# Promo Finder — Solution Doc
+# Promo Finder: Solution Doc
 
-**Name:** Gautam Kumar · **Roll no:** 230106026 · **Problem chosen:** 1 — Find the Promos
+**Name:** Gautam Kumar · **Roll no:** 230106026 · **Problem chosen:** Problem 1, Find the Promos
 
-**Links:** Live app → [STREAMLIT URL]  ·  Code → [GITHUB REPO URL]  ·  Video → [LOOM/YOUTUBE URL]  ·  Raw outputs → in this Drive folder
+**Links:** Live app → https://promo-clip-finder.streamlit.app · Code → https://github.com/gautamkumar34/promo-finder · Video → [LOOM/YOUTUBE URL] · Raw outputs → in this Drive folder
 
-> Export this to PDF (≤2 pages) for submission. The form has a single Drive-link field, so this doc is where the repo/app/video links live — keep them clickable.
+## Why I picked Problem 1
 
-## Which problem and why
+I picked this partly because I have felt the pain myself, since I once spent far longer finding the one twenty second moment worth posting from some footage than I spent editing it. It is also the closest thing to Kuku's real weekly job, where an editor picks promo moments by hand from every new episode, and it comes with data a tool can use, because every scene, line, and action carries an exact timestamp that lets the output be precise cut points. I set the others aside, because Problem 2 is a grounding problem of a kind I have already built, and Problem 3 asks you to invent a problem when I would rather solve a real one.
 
-I chose **Problem 1**, partly because I've felt this exact pain myself. I'd been trying to cut a Reel from longer footage, and finding the one 20–30 second moment actually worth posting is slow, frustrating work — a tool that does that is something I personally wanted. It's also the problem closest to Kuku's real weekly job: an editor hand-picks promo moments from every episode of every new show. And it comes with machine-readable data — screenplays where every scene, line and action carries an exact timestamp — so a tool can output **precise cut points** an editor uses immediately, which is what the task asks for.
+## The idea the whole thing rests on
 
-On the other two: Problem 2 is a retrieval-and-grounding problem close to RAG systems I've already built, so it wouldn't have stretched me; Problem 3 asks you to bring your own problem, but I'd rather take on one that was new to me than invent one. Problem 1 was new, concrete, and personal — so that's the one I wanted to solve.
-
-## The key idea
-
-Each episode is a 1–2 minute video; the screenplay is a **time-aligned transcript** of it. So the tool reads cheap text, decides where the best promos are, and emits `(episode, start, end)` cut points that map 1:1 onto the real video. No video processing is needed — an editor (or an `ffmpeg` step) cuts the given spans. This is what makes it scale to every show at near-zero cost.
+Each episode is only one or two minutes of video, and the screenplay that comes with it is a transcript lined up to the clock, where every line and action has a start and end time down to a hundredth of a second. So the tool never looks at a single frame of video. It reads the text, decides where the best promo is, and returns the episode with a start and an end, and those timestamps drop straight onto the real video so that a human or a one line ffmpeg step does the cutting. Skipping video processing is the whole scale story, because it is what makes the tool cost pennies per episode.
 
 ## How it works
 
-A hybrid pipeline, so the right work goes to the right place:
+Code does what is objective and the model does what is a matter of taste. There are six stages.
 
-1. **Parser (code, $0):** screenplay `.txt` → structured JSON (scenes → timestamped beats).
-2. **Candidate windows (code, $0):** generate 20–60s windows on **objective** rules only — duration, beat boundaries, ends biased toward scene-cuts / sound-FX cliffhanger cues. No keyword "hook" filter (see failures).
-3. **LLM scoring (swappable provider):** each candidate is scored 1–10 on **hook** (first 3s), **cliffhanger**, and **standalone clarity**, returning strict JSON plus the hook line, cliffhanger line, and one line on why it works. Behind a provider-agnostic `ModelAdapter`: **Claude** (Sonnet 5.5 / Opus 5.5) runs the full pipeline, and **Gemini 3.8 Flash** (free tier) runs it through the same one-line swap — I verified the Claude→Gemini swap on a live run (same adapter, same JSON contract, different provider). The app also exposes a runtime field to paste any provider's key (and base URL) and run live — held in memory only, never stored — so Kuku, or a reviewer in the interview, can connect whatever API they provide without touching the code. A live model swap is shown in the video.
-4. **Cross-episode stitching (LLM, ≤2 segments):** promos can join moments across episodes (e.g. an early humiliation hook + a later revenge beat); the model validates coherence and keeps it ≤60s.
-5. **Rank + posting order:** ranked by composite, split into **Wave 1** (broad cold-audience hooks) and **Wave 2** (high-drama retargeting) — my answer to "which would you post first."
+1. **Parse (code).** The screenplay text becomes structured JSON, from episode to scenes to timestamped beats.
+2. **Candidate windows (code).** The tool builds windows of 20 to 60 seconds from objective signals alone, such as duration, beat boundaries, and ends that fall on scene cuts or sound effects, and it never filters for hooks by keyword.
+3. **Score (LLM, swappable).** Each window is rated 1 to 10 on hook, cliffhanger, and standalone clarity, and it returns the hook line, the cliffhanger line, and one sentence on why it works. There is one call per episode, and sending the full episode as context is what lets the model judge whether a clip truly stands alone.
+4. **Stitch across episodes (LLM).** Some promos join an early hook to a later payoff, so the model proposes a pair of at most two segments, and a second pass reads both spans to confirm they cut together under sixty seconds.
+5. **Rank and posting order.** Clips are ranked by a composite score and split into Wave 1, the broad hooks I would post first to a cold audience, and Wave 2, the high drama I would keep for retargeting warmer viewers.
+6. **Self audit (LLM).** A stronger model, Opus, rereads the top picks and flags the weak ones for a human to review.
 
-**Division of labour:** code owns what is objective (timing, boundaries); the model owns what is subjective (is this a hook / cliffhanger / self-contained). A human reviews only the top-ranked candidates.
+The model sits behind one small adapter, so changing the model or provider is a single dropdown value. I ran the pipeline on Claude, using Sonnet 5.5 for bulk work and Opus 5.5 as the critic, then verified the swap to Gemini 3.8 Flash on a live run with the same adapter and JSON contract on a free tier. The app also takes any provider's key at runtime, held in memory and never stored, so a reviewer can connect Kuku's own API without touching the code. The model never writes a timestamp, because it refers to a window only by its ID while every timecode comes from code, which stops it inventing the plausible timecodes that language models tend to produce.
 
-## How it scales to every show, and what it costs
+## What it costs, and how it scales
 
-Grounded in the pack (75,071 words ≈ ~3K tokens/episode):
+Grounded in the real pack of 75,071 words, which is about 3K tokens per episode:
 
-| Model | Per episode | 50-ep show | 2,500 eps/wk* |
+| Model | Per episode | Per 50 episodes | Per week (assumed) |
 |---|---|---|---|
-| Sonnet 5.5 (**measured**) | **~$0.034** | **~$1.70** | ~$85/wk |
-| Opus 5.5 (extrapolated) | ~$0.07 | ~$3.4 | ~$170/wk |
+| Sonnet 5.5 (**measured**) | **\~$0.034** | **\~$1.70** | \~$85 |
+| Opus 5.5 (extrapolated) | \~$0.07 | \~$3.40 | \~$170 |
 
-\*50 shows × 50 eps/wk is my **assumed** volume (the brief says "new shows every week" but gives no number) — scale it linearly. The Sonnet row is **measured** on the real full run: 600 windows across 50 episodes for **~$1.70 in ~14 minutes** (246K input / 117K output tokens); the Opus row is that run's token counts repriced. Pennies per episode against hours of manual watching, and halvable again with the Batch API. Because the model sits behind an adapter, Kuku can swap in a stronger API key in one line.
+The weekly figure assumes about 2,500 episodes, roughly 50 shows of 50 episodes, because the brief says there are new shows every week but gives no number, so that row scales linearly. The Sonnet figure is measured on the real full run, where 600 windows across all 50 episodes cost about $1.70 in about 14 minutes, using 246K input and 117K output tokens, and the Opus row is that same run repriced. Either way it is pennies per episode against hours of manual watching, and the Batch API would roughly halve it again because the offline run is not sensitive to latency.
 
-## How I know it's good — including where it fails
+**If episodes were longer.** These numbers are tuned to Kuku's format of one or two minute microdramas, and the architecture itself does not care about length because it takes text in and returns cut points. Two knobs are sized for short episodes. One call per episode works because a whole episode fits cheaply in one prompt, but a thirty to forty minute episode would cost roughly fifteen to twenty times more, and the cap of about twelve candidates would miss moments in a longer runtime. The fix is a two stage scan, where a cheap model finds the three or four hottest regions first and detailed scoring runs only there, which keeps cost below linear.
 
-I ran two **blind** human checks (me as the editor proxy, scores hidden both times):
+## How I know it's good, and where it isn't
 
-- **Does the score tell good promos from bad? (separation)** — 12 clips, half the tool's top-rated and half its bottom-rated, shuffled; I marked each post/skip. I posted **4/6** of the top-rated and skipped **5/6** of the bottom-rated — **9/12**. It's a small test (n=12, one labeler who also built the tool, extreme top vs extreme bottom), so read it as: the score separates clear good from clear bad, but top-tier precision is only **4/6 (67%)** — about a third of top-rated clips still aren't postable.
-- **Can it pick the single best? (fine ordering)** — 8 episodes, pick the one I'd post from the tool's top 3. I matched its #1 only **2/8** (at chance), and my disagreements tracked no single score. Ordering *within* the top few is near-noise.
-- **Takeaway:** the tool is a useful **shortlister** but a weak **final-ranker** — so it narrows to the top ~3 per episode and a human makes the final pick. That's the human-in-the-loop split in the design, now backed by data, not asserted.
+I ran two blind checks, playing the editor myself with the scores hidden both times.
 
-**Where it picks badly (real cases from the runs):**
-- *It over-values a slow "something's coming" cut.* Ep22 (poisoning bedchamber) and Ep23 (a door creaking open) both scored high but I'd skip them — the payoff is there, but the first 3s won't stop a scroll. The Opus self-audit **independently flagged Ep22 as `weak_hook`**; Ep23 it didn't flag, yet Ep23 sits at **#2 in the ranked list** — a concrete case of the ranking putting a clip *I* would skip near the top.
-- *It sometimes returns an ungrounded quote.* The scorer occasionally gives a hook/cliffhanger line that paraphrases rather than quotes the clip (e.g. Ep44's hook line isn't verbatim in the span). **Known limitation, not yet fixed** — the fix is to validate the line appears in the window and snap the in-point to include the hook beat; I chose not to re-run the full scorer late and destabilise the cited results.
-- *It has false negatives too.* Ep39 scored low (3.25) but I'd post it — the tool misses good moments, not only over-picks bad ones.
-- *The self-audit is a cross-check, not proof.* An Opus critic flags **15 of the top 25** promos; since critic and scorer are both LLMs, the human labels above are the real check.
+The first asked whether the score can tell a good promo from a bad one. I took 12 clips, half top rated and half bottom rated, shuffled them, and marked each post or skip. I posted 4 of the 6 top rated clips and skipped 5 of the 6 bottom rated ones, which is 9 of 12. With one labeler who also built the tool I read this narrowly, as evidence that the score separates clear good from clear bad while its top tier precision is only 4 of 6, or 67 percent.
 
-## Assumptions
-Promo = 20–60s, hook in first ~3s, ends unresolved, stands alone. Cross-episode promos capped at 2 segments. Screenplay timestamps are the cut-point source of truth. The input pack is kept out of the public repo (confidentiality); the public demo runs on a synthetic screenplay I wrote.
+The second asked whether it can pick the single best clip. Across 8 episodes I asked it to choose the one I would post from its top 3, and it matched me only 2 of 8 times, which is chance. So the honest takeaway is that it is a strong shortlister and a weak final ranker, which is why it narrows each episode to about three clips and leaves the last call to a human.
 
-## Tools used, and one place AI got it wrong
-Claude for planning and code; Streamlit for the UI; Claude API for scoring. **One place AI got it wrong:** a generated plan proposed detecting hooks with a regex (`[SLAP]`, `[SHOUTS]`, `?`, `!`). Grepping the 50 files showed **no** such markers and `?`/`!` matching ~35% of all dialogue — the rule matched noise and would have thrown away the best hook in the pack. I caught it by checking against the data, which is why hook-judgment is left to the model, not regex.
+The real failures come from the actual runs. It over values a slow scene where something is coming, as in Ep22, a dark bedchamber poisoning that scored high although the first three seconds will not stop a scroll, and the Opus critic flagged it too. It sometimes cites a hook line that is not actually inside the clip, which the Opus critic caught on Ep44, so I added a deterministic code check that verifies the quoted dialogue of each hook appears in its window. That check flags 6 of the 57 quoted hooks, and in five of them the in-point simply starts a beat too late and clips the hook off, which the app now shows on the card and which is fixed by snapping the start back. It also has false negatives, since Ep39 scored low at 3.25 but I would post it. And the self audit is only a cross check, because the Opus critic flagged 15 of the top 25 picks and 16 across all 103, yet both critic and scorer are language models, so the human labels above are the real evidence.
+
+## Assumptions I made where the brief was silent
+
+I assumed a promo is 20 to 60 seconds long, opens with a hook in the first three seconds, ends unresolved, and stands alone, and I capped cross episode promos at two segments. I treated the screenplay timestamps as the source of truth for cut points while leaving the final frame trim to a human. For confidentiality I kept the Kuku pack out of the public repo, so the public demo runs on a synthetic screenplay I wrote and the real 50 episode outputs ship only through the private Drive link.
+
+## Tools I used, and one place AI got it wrong
+
+I used Claude for planning and most of the code, Streamlit for the interface, and the Claude API for scoring. An early generated plan was confident that I should detect hooks with a regex, matching bracketed markers like SLAP and SHOUTS along with any line ending in a question or exclamation mark. I grepped all 50 files first and found no bracketed markers at all, and that question and exclamation marks match about 35 percent of all dialogue, so the rule was matching noise and would have discarded the best hook in the pack, a quiet line with no punctuation. That is why the candidate stage uses only objective constraints and leaves hook judgment to the model, and checking the suggestion against the data is the single thing that most shaped the design.
