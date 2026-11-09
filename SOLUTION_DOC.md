@@ -2,7 +2,7 @@
 
 **Name:** Gautam Kumar · **Roll no:** 230106026 · **Problem chosen:** Problem 1, Find the Promos
 
-**Links:** Live app → https://promo-clip-finder.streamlit.app · Code → https://github.com/gautamkumar34/promo-finder · Video → [LOOM/YOUTUBE URL] · Raw outputs → in this Drive folder
+**Links:** Live app → https://promo-clip-finder.streamlit.app · Code → https://github.com/gautamkumar34/promo-finder · Video → https://drive.google.com/file/d/1EooAcY0lPtLQ3OJzOrjRp6ne8b0BRMKY/view · Raw outputs → in this Drive folder
 
 ## Why I picked Problem 1
 
